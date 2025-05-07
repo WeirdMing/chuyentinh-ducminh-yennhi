@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chuyện Tình Đức Minh & Yến Nhi</title>
+  <style>
+    /* Basic resets */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffe4e1;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #game-container {
+      background: rgba(255, 255, 255, 0.8); /* Mờ một chút để thấy ảnh nền */
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      width: 320px;
+      max-width: 90%;
+      overflow: hidden;
+      position: relative;
+      background-size: cover; /* Đảm bảo ảnh nền phủ toàn bộ */
+      background-position: center; /* Căn giữa ảnh nền */
+      height: 80%; /* Đảm bảo chiều cao của game container */
+    }
+
+    #text-box {
+      padding: 16px;
+      min-height: 120px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #333;
+      text-align: center;
+    }
+
+    .choice-btn {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: #ffb6c1;
+      cursor: pointer;
+      font-size: 1rem;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      transition: background 0.3s;
+    }
+
+    .choice-btn:hover {
+      background: #ff9aa2;
+    }
+
+    .fade {
+      transition: opacity 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container" class="fade">
+    <div id="text-box"></div>
+    <div id="choices"></div>
+  </div>
+  <script>
+    const story = {
+      start: {
+        text: "Đức Minh vô tình gặp Yến Nhi dưới gốc cây hoa đào. Cậu chợt bắt chuyện...",
+        img: "images/scene1.jpg",  // ảnh nền cho scene này
+        choices: [
+          { text: "Khen cô bé xinh đẹp", next: "scene2" },
+          { text: "Mời cô chơi đùa cùng", next: "scene3" }
+        ]
+      },
+      scene2: {
+        text: "Yến Nhi đỏ mặt, tim đập nhanh. Lựa chọn của bạn?",
+        img: "images/scene2.jpg",  // ảnh nền cho scene này
+        choices: [
+          { text: "Xin số điện thoại", next: "scene4" },
+          { text: "Hẹn gặp lại", next: "ending_maybe" }
+        ]
+      },
+      scene3: {
+        text: "Hai bạn cùng nô đùa, cười vang khắp sân trường. Tiếp theo?",
+        img: "images/scene3.jpg",  // ảnh nền cho scene này
+        choices: [
+          { text: "Cùng ăn kem", next: "scene4" },
+          { text: "Chia tay trước cổng", next: "ending_miss" }
+        ]
+      },
+      scene4: {
+        text: "Gần gũi hơn, trái tim rung động. Bạn quyết định:",
+        img: "images/scene4.jpg",  // ảnh nền cho scene này
+        choices: [
+          { text: "Tỏ tình", next: "ending_love" },
+          { text: "Giữ bí mật cảm xúc", next: "ending_friend" }
+        ]
+      },
+      ending_love: {
+        text: "Yến Nhi cũng thổ lộ, hai bạn chính thức thành đôi! ❤️",
+        img: "images/end_love.jpg",  // ảnh nền cho kết thúc này
+        choices: [ { text: "Chơi lại", next: "start" } ]
+      },
+      ending_friend: {
+        text: "Hai bạn trở thành đôi bạn thân, cuộc sống vẫn hạnh phúc. 🙂",
+        img: "images/end_friend.jpg",  // ảnh nền cho kết thúc này
+        choices: [ { text: "Chơi lại", next: "start" } ]
+      },
+      ending_miss: {
+        text: "Bạn vụt mất cô bé, tiếc nuối khôn nguôi. 😢",
+        img: "images/end_miss.jpg",  // ảnh nền cho kết thúc này
+        choices: [ { text: "Chơi lại", next: "start" } ]
+      },
+      ending_maybe: {
+        text: "Bạn hẹn gặp lại, chưa biết tương lai ra sao... 🤔",
+        img: "images/end_maybe.jpg",  // ảnh nền cho kết thúc này
+        choices: [ { text: "Chơi lại", next: "start" } ]
+      }
+    };
+
+    const imgEl = document.getElementById('scene-img');
+    const textBox = document.getElementById('text-box');
+    const choicesEl = document.getElementById('choices');
+    const container = document.getElementById('game-container');
+
+    function showScene(key) {
+      container.style.opacity = 0;
+      setTimeout(() => {
+        const scene = story[key];
+        container.style.backgroundImage = `url(${scene.img})`; // Cập nhật ảnh nền cho mỗi cảnh
+        textBox.textContent = scene.text;
+        choicesEl.innerHTML = '';
+        scene.choices.forEach(c => {
+          const btn = document.createElement('button');
+          btn.className = 'choice-btn';
+          btn.textContent = c.text;
+          btn.addEventListener('click', () => showScene(c.next));
+          choicesEl.appendChild(btn);
+        });
+        container.style.opacity = 1;
+      }, 500);
+    }
+
+    // Start game
+    showScene('start');
+  </script>
+</body>
+</html>
